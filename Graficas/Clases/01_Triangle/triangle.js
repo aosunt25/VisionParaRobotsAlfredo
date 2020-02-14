@@ -73,7 +73,7 @@ function createTriangle(gl)
         0.0,  0.5,  0.0,
         -.5,  -.5,  0.0,
         .5, -.5,  0.0,
-        // 0, -1, 0
+        0, -1, 0
     ];
     // void gl.bufferData(target, ArrayBufferView srcData, usage, srcOffset, length);
     // target = gl.ARRAY_BUFFER: Buffer containing vertex attributes, such as vertex coordinates, texture coordinate data, or vertex color data.
@@ -82,7 +82,7 @@ function createTriangle(gl)
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
 
     // The resulting object contains the vertexbuffer, the size of the vertex structure (3 floats, x, y, z), the number of vertices to be drawn, the the primitive to draw.
-    let triangle = {buffer:vertexBuffer, vertSize:3, nVerts:3, primtype:gl.TRIANGLES};
+    let triangle = {buffer:vertexBuffer, vertSize:3, nVerts:3, primtype:gl.TRIANGLE_FAN};
     return triangle;
 }
 
