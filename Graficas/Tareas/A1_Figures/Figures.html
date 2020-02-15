@@ -15,19 +15,35 @@
 // Jquery that detects the state of rediness. Code inside the function will only run once the page DOM is ready for Javascript code to execute.
 	$(document).ready(
 			function() {
-                var canvas = document.getElementById("webglcanvas");
+                let canvas = document.getElementById("webglcanvas");
                 
-                var gl = initWebGL(canvas);
+                let gl = initWebGL(canvas);
                 initGL(gl, canvas);
 		        initViewport(gl, canvas);
                 initShader(gl);
 
-                var square = createSquare(gl);
-                var triangle = createTriangle(gl);
-                var sphere = createSphere(gl, 0.5);
-                var rhombus = createRhombus(gl);
-                
+                let square = createSquare(gl);
+                let triangle = createTriangle(gl);
+                let sphere = createSphere(gl, 0.5);
+                let rhombus = createRhombus(gl);
+ 
                 // TO DO: Transform the different figure's positions, and draw them.
+
+                mat4.identity(modelViewMatrix);
+                mat4.translate(modelViewMatrix, modelViewMatrix, [1.0, 0.7, -3.333]);
+                draw(gl,triangle)
+
+                mat4.identity(modelViewMatrix);
+                mat4.translate(modelViewMatrix, modelViewMatrix, [-1.0, 0.7, -3.333]);
+                draw(gl,square);
+
+                mat4.identity(modelViewMatrix);
+                mat4.translate(modelViewMatrix, modelViewMatrix, [-1.0, -0.7, -3.333]);
+                draw(gl,rhombus);
+
+                mat4.identity(modelViewMatrix);
+                mat4.translate(modelViewMatrix, modelViewMatrix, [1.0, -0.7, -3.333]);
+                draw(gl,sphere)
                 
 			}
 	);

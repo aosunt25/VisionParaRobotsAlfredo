@@ -175,24 +175,76 @@ function draw(gl, obj)
 // TO DO: Create functions needed to generate the vertex data for the different figures.
 function createSquare(gl) 
 {
-    var square = {};
+    let vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    let vertex = [
+        .5,  .5,  0.0,
+        -.5, .5,  0.0,
+        .5,  -.5,  0.0,
+        -.5, -.5,  0.0,
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex), gl.STATIC_DRAW);
+
+    var square = {buffer:vertexBuffer, vertSize:3, nVerts:4,primtype:gl.TRIANGLE_STRIP};
     return square;
 }
 
 function createTriangle(gl)
-{
-    var triangle = {};
+{   
+    let vertexBuffer;
+    vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    let vertex = [
+        0.0, 0.5, 0.0,
+        .5, -.5,  0.0,
+        -.5, -.5,  0.0
+    ];  
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex), gl.STATIC_DRAW);
+
+    // The resulting object contains the vertexbuffer, the size of the vertex structure (3 floats, x, y, z), the number of vertices to be drawn, the the primitive to draw.
+    let triangle = {buffer:vertexBuffer, vertSize:3, nVerts:3, primtype:gl.TRIANGLES};
     return triangle;
 }
 
 function createRhombus(gl)
 {
-    var rhombus = {};
+    let vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    let vertex=[
+        0.0, .5, 0.0,
+        -.5, 0.0, 0.0,
+        .5, 0.0, 0.0,
+        0.0, -.5, 0.0,
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex), gl.STATIC_DRAW);
+
+    var rhombus = {buffer:vertexBuffer, vertSize:3, nVerts:4, primtype:gl.TRIANGLE_STRIP};
     return rhombus;
 }
 
 function createSphere(gl, radius)
 {
-    var sphere = {};
+    let vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    let vertex=[
+        0.0, 0.0, 0.0,
+    ];
+    const PI = 3.1415926535;
+    let i, angle, x1, y1;
+
+    for(i = 0; i < 360; i += 1)
+    {
+        angle = i;
+        if(i>35 && i<325){
+            x1 = radius * Math.cos(angle * PI / 180);
+            y1 = radius * Math.sin(angle * PI / 180);
+            vertex.push(x1, y1, 0.0);
+        }
+       
+    }
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex), gl.STATIC_DRAW);
+
+
+    var sphere = {buffer:vertexBuffer, vertSize:3, nVerts:290, primtype:gl.TRIANGLE_FAN};
     return sphere;
 }        
