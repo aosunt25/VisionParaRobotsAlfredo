@@ -169,6 +169,7 @@ function createPyramid(gl, translation, rotationAxis){
     
     return pyramid;
 }
+
 function createOctahedron(gl, translation, rotationAxis){
 
     let vertexBuffer;
@@ -283,6 +284,7 @@ function createOctahedron(gl, translation, rotationAxis){
     
     return octahedron;
 }
+
 function createShader(gl, str, type)
 {
     let shader;

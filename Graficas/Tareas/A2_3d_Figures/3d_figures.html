@@ -16,8 +16,8 @@
 			    var gl = initWebGL(canvas);
 		        initViewport(gl, canvas);
 		        initGL(canvas);
-				var cube = createPyramid(gl, [2 , 0, -1], [0, 1, 0.0]);
-				var cube2 = createOctahedron(gl, [-2 , 0, -1], [0, 1, 0.0]);
+				var cube = createPyramid(gl, [2 , 1, -1], [0, 1, 0.0]);
+				var cube2 = createOctahedron(gl, [-2 , 1, -1], [0, 1, 0.0]);
 		        initShader(gl);
 				run(gl, [cube,cube2]);
 			}
