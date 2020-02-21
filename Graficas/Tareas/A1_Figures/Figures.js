@@ -232,15 +232,15 @@ function createSphere(gl, radius)
     const PI = 3.1415926535;
     let i, angle, x1, y1;
     let counter = 1;
-    for(i = 0; i < 360; i += 1)
+    for(i = 0; i <= 360; i += 72)
     {
         angle = i;
-        if(i>35 && i<325){
+        
             x1 = radius * Math.cos(angle * PI / 180);
             y1 = radius * Math.sin(angle * PI / 180);
             vertex.push(x1, y1, 0.0);
             counter++;
-        }
+        
        
     }
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex), gl.STATIC_DRAW);

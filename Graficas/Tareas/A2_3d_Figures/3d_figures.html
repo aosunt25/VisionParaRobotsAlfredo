@@ -16,10 +16,11 @@
 			    var gl = initWebGL(canvas);
 		        initViewport(gl, canvas);
 		        initGL(canvas);
-				var cube = createPyramid(gl, [2 , 1, -1], [0, 1, 0.0]);
-				var cube2 = createOctahedron(gl, [-2 , 1, -1], [0, 1, 0.0]);
+				var pyramid = createPyramid(gl, [2 , 1, -1], [0, 1, 0.0]);
+				var octahedron = createOctahedron(gl, [-2 , 1, -1], [0, 1, 0.0]);
+				var penthPyramid = createPenthPyramid(gl, [-1.5 , -2, -1], [0, 1, 0.0]);
 		        initShader(gl);
-				run(gl, [cube,cube2]);
+				run(gl, [pyramid,octahedron,penthPyramid]);
 			}
 	);
 

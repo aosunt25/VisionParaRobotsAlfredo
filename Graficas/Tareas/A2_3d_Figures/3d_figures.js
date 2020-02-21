@@ -261,7 +261,7 @@ function createOctahedron(gl, translation, rotationAxis){
 
     let octahedron = {
         buffer:vertexBuffer, colorBuffer:colorBuffer, indices:octahedronIndexBuffer,
-        vertSize:3, nVerts: 22, colorSize:4, nColors: 24, nIndices:24,
+        vertSize:3, nVerts: 22, colorSize:4, nColors: 22, nIndices:24,
         primtype:gl.TRIANGLES, modelViewMatrix: mat4.create(), currentTime : Date.now()};
 
     mat4.translate(octahedron.modelViewMatrix, octahedron.modelViewMatrix, translation);
@@ -285,6 +285,87 @@ function createOctahedron(gl, translation, rotationAxis){
     return octahedron;
 }
 
+function createPenthPyramid(gl, translation, rotationAxis){
+    
+    let vertexBuffer;
+    vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    let verts = []
+    verts.push(0.0, 0.0, 0.0);
+    for(j = 0; j<360; j+=72){    
+        angle = j;
+        x1 = 0.5 * Math.cos(angle * Math.PI / 180);
+        z1 = 0.5 * Math.sin(angle * Math.PI / 180);
+        verts.push(x1, 0.0, z1);  
+    }
+    verts.push(0.0,1,0.0);
+    
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+
+    let colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    let faceColors = [
+        [1.0, 0.0, 0.0, 1.0], // Front Down face
+        [0.0, 1.0, 0.0, 1.0], // Back Down face
+        [1.0, 1.0, 0.0, 1.0], // Left Down face
+        [1.0, 0.0, 1.0, 1.0], // Right Down face
+        [1.0, 0.0, 0.0, 1.0], // Front Down face
+        [0.0, 1.0, 0.0, 1.0] // Back Down face
+    ]
+
+    let vertexColors = [];
+
+    faceColors.forEach(color =>{
+        for (let j=0; j < 4; j++)
+            vertexColors.push(...color);
+    });
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexColors), gl.STATIC_DRAW);
+
+    let octahedronIndexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, octahedronIndexBuffer);
+
+    let penthPyramidIndices = [
+        0, 1, 2,      // Front face
+        0, 2, 3,      // Back face
+        0, 3, 4,      // Left face
+        0, 4, 5,    // Right face
+        0, 5, 1,   // Front Down face  
+        6, 1, 2,      // Front face
+        6, 2, 3,      // Back face
+        6, 3, 4,      // Left face
+        6, 4, 5,    // Right face
+        6, 5, 1,  
+    ]
+
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(penthPyramidIndices), gl.STATIC_DRAW);
+
+    let octahedron = {
+        buffer:vertexBuffer, colorBuffer:colorBuffer, indices:octahedronIndexBuffer,
+        vertSize:3, nVerts: 6, colorSize:4, nColors: 6, nIndices:30,
+        primtype:gl.TRIANGLES, modelViewMatrix: mat4.create(), currentTime : Date.now()};
+
+    mat4.translate(octahedron.modelViewMatrix, octahedron.modelViewMatrix, translation);
+
+    octahedron.update = function()
+    {
+        let now = Date.now();
+        let deltat = now - this.currentTime;
+        this.currentTime = now;
+        let fract = deltat / duration;
+        let angle = Math.PI * 2 * fract;
+    
+        // Rotates a mat4 by the given angle
+        // mat4 out the receiving matrix
+        // mat4 a the matrix to rotate
+        // Number rad the angle to rotate the matrix by
+        // vec3 axis the axis to rotate around
+        mat4.rotate(this.modelViewMatrix, this.modelViewMatrix, angle, rotationAxis);
+    };
+    
+    return octahedron;
+}
 function createShader(gl, str, type)
 {
     let shader;
