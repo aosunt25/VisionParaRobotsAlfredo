@@ -17,10 +17,11 @@
 		        initViewport(gl, canvas);
 		        initGL(canvas);
 				var pyramid = createPyramid(gl, [2 , 1, -1], [0, 1, 0.0]);
-				var octahedron = createOctahedron(gl, [-2 , 1, -1], [0, 1, 0.0]);
-				var penthPyramid = createPenthPyramid(gl, [-1.5 , -2, -1], [0, 1, 0.0]);
+				var octahedron = createOctahedron(gl, [-2 , -1, -1], [0, 1, 0.0]);
+				var penthPyramid = createPenthPyramid(gl, [-2 ,1, -1], [0, 1, 0.0]);
+				var dodecahedron = createDodecahedron(gl, [2 , -1, -1], [0, 1, 0.0]);
 		        initShader(gl);
-				run(gl, [pyramid,octahedron,penthPyramid]);
+				run(gl, [pyramid,octahedron,penthPyramid,dodecahedron]);
 			}
 	);
 
