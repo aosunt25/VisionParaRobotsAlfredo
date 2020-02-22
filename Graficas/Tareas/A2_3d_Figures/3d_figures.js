@@ -267,21 +267,40 @@ function createOctahedron(gl, translation, rotationAxis){
 
     mat4.translate(octahedron.modelViewMatrix, octahedron.modelViewMatrix, translation);
 
-    octahedron.update = function()
-    {
-        let now = Date.now();
-        let deltat = now - this.currentTime;
-        this.currentTime = now;
-        let fract = deltat / duration;
-        let angle = Math.PI * 2 * fract;
-    
-        // Rotates a mat4 by the given angle
-        // mat4 out the receiving matrix
-        // mat4 a the matrix to rotate
-        // Number rad the angle to rotate the matrix by
-        // vec3 axis the axis to rotate around
-        mat4.rotate(this.modelViewMatrix, this.modelViewMatrix, angle, rotationAxis);
-    };
+    let i = 0, dir = 0;
+        octahedron.update = function()
+        {
+            let now = Date.now();
+            let deltat = now - this.currentTime;
+            this.currentTime = now;
+            let fract = deltat / duration;
+            let angle = Math.PI * 2 * fract;
+
+            let height = 160;
+            if(i < height && dir == 0){
+                mat4.translate(octahedron.modelViewMatrix, octahedron.modelViewMatrix, [0,+.01,0]);
+                i++;
+                if(i == height){
+                    dir = 1;
+                }
+            }
+            else{
+                mat4.translate(octahedron.modelViewMatrix, octahedron.modelViewMatrix, [0,-.01,0]);
+                i--;
+                if(i == (height * -1)){
+                    dir = 0;
+                }
+            }
+
+
+
+            // Rotates a mat4 by the given angle
+            // mat4 out the receiving matrix
+            // mat4 a the matrix to rotate
+            // Number rad the angle to rotate the matrix by
+            // vec3 axis the axis to rotate around
+            mat4.rotate(this.modelViewMatrix, this.modelViewMatrix, angle, rotationAxis);
+        };
     
     return octahedron;
 }
