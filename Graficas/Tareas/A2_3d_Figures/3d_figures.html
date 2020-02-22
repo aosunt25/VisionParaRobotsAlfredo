@@ -16,12 +16,11 @@
 			    var gl = initWebGL(canvas);
 		        initViewport(gl, canvas);
 		        initGL(canvas);
-				var pyramid = createPyramid(gl, [2 , 1, -1], [0, 1, 0.0]);
-				var octahedron = createOctahedron(gl, [-2 , -1, -1], [0, 1, 0.0]);
-				var penthPyramid = createPenthPyramid(gl, [-2 ,1, -1], [0, 1, 0.0]);
-				var dodecahedron = createDodecahedron(gl, [2 , -1, -1], [0, 1, 0.0]);
+				var octahedron = createOctahedron(gl, [2 , 0, -1], [0, 1, 0]);
+				var penthPyramid = createPenthPyramid(gl, [-2 ,0, -1], [0.1, 1.0, 0.2]);
+				var dodecahedron = createDodecahedron(gl, [0 , 0, -1], [-0.4, 1.0, 0.1]);
 		        initShader(gl);
-				run(gl, [pyramid,octahedron,penthPyramid,dodecahedron]);
+				run(gl, [octahedron,penthPyramid,dodecahedron]);
 			}
 	);
 
@@ -30,7 +29,7 @@
 </head>
 <body>
 
-	<canvas id="webglcanvas" style="border: none;" width="800" height="500">
+	<canvas id="webglcanvas" style="border: none; position: relative; left:200px; top:50px;" width="800" height="500">
 	</canvas>
 
 </body>
