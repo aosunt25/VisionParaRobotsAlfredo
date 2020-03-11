@@ -198,7 +198,7 @@ function createScene(canvas)
 
     transFormControls = new THREE.TransformControls( camera, renderer.domElement );
     transFormControls.addEventListener('change', renderer);
-    transFormControls.attach(mesh[0]);
+    transFormControls.attach(objectList[0]);
 
    
     scene.add(transFormControls);
