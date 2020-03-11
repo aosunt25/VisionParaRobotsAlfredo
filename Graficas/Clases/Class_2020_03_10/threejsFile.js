@@ -1,15 +1,17 @@
-// 1. Enable shadow mapping in the renderer. 
-// 2. Enable shadows and set shadow parameters for the lights that cast shadows. 
-// Both the THREE.DirectionalLight type and the THREE.SpotLight type support shadows. 
+// 1. Enable shadow mapping in the renderer.
+// 2. Enable shadows and set shadow parameters for the lights that cast shadows.
+// Both the THREE.DirectionalLight type and the THREE.SpotLight type support shadows.
 // 3. Indicate which geometry objects cast and receive shadows.
 
-let renderer = null, 
-scene = null, 
+let renderer = null,
+scene = null,
 camera = null,
 root = null,
 group = null,
 objectList = [],
 orbitControls = null;
+transFormControls = null;
+mesh = null;
 
 let objLoader = null;
 
@@ -29,7 +31,7 @@ let SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 2048;
 //Scene Objects
 let objModelUrl = {obj:'../models/obj/human/FinalBaseMesh.obj', map:'../models/obj/human/gray.png'};
 
-function promisifyLoader ( loader, onProgress ) 
+function promisifyLoader ( loader, onProgress )
 {
     function promiseLoader ( url ) {
       return new Promise( ( resolve, reject ) => {
@@ -75,7 +77,7 @@ async function loadObj(objModelUrl, objectList)
     }
 }
 
-function animate() 
+function animate()
 {
     let now = Date.now();
     let deltat = now - currentTime;
@@ -88,10 +90,13 @@ function animate()
             object.rotation.y += angle / 2;
 }
 
-function run() 
+function run()
 {
     requestAnimationFrame(function() { run(); });
-    
+
+
+    // mesh.rotation.x += 0.01;
+    // mesh.rotation.y += 0.02;
     // Render the scene
     renderer.render( scene, camera );
 
@@ -99,7 +104,8 @@ function run()
     //animate();
 
     // Update the camera controller
-    orbitControls.update();
+    //orbitControls.update();
+    
 }
 
 function setLightColor(light, r, g, b)
@@ -107,11 +113,11 @@ function setLightColor(light, r, g, b)
     r /= 255;
     g /= 255;
     b /= 255;
-    
+
     light.color.setRGB(r, g, b);
 }
 
-function createScene(canvas) 
+function createScene(canvas)
 {
     // Create the Three.js renderer and attach it to our canvas
     renderer = new THREE.WebGLRenderer( { canvas: canvas, antialias: true } );
@@ -123,21 +129,21 @@ function createScene(canvas)
     renderer.shadowMap.enabled = true;
     // Options are THREE.BasicShadowMap, THREE.PCFShadowMap, PCFSoftShadowMap
     renderer.shadowMap.type = THREE.BasicShadowMap;
-    
+
     // Create a new Three.js scene
     scene = new THREE.Scene();
 
     // Add  a camera so we can view the scene
     camera = new THREE.PerspectiveCamera( 60, canvas.width / canvas.height, 1, 4000 );
     camera.position.set(0, 15, 25);
-    
+    camera.lookAt(0,10,0);
     scene.add(camera);
 
-    orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
-    orbitControls.target.y = 10;
+    // orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+    // orbitControls.target.y = 10;
     // Create a group to hold all the objects
     root = new THREE.Object3D;
-    
+
     // Add a directional light to show off the object
     directionalLight = new THREE.DirectionalLight( 0x7a7a7a, 1);
 
@@ -157,13 +163,13 @@ function createScene(canvas)
     spotLight.shadow.camera.near = 1;
     spotLight.shadow. camera.far = 200;
     spotLight.shadow.camera.fov = 45;
-    
+
     spotLight.shadow.mapSize.width = SHADOW_MAP_WIDTH;
     spotLight.shadow.mapSize.height = SHADOW_MAP_HEIGHT;
 
     ambientLight = new THREE.AmbientLight ( 0xffffff, 0.8);
     root.add(ambientLight);
-    
+
     // Create the objects
     loadObj(objModelUrl, objectList);
 
@@ -179,7 +185,7 @@ function createScene(canvas)
 
     let color = 0xffffff;
 
-    
+
     // Put in a ground plane to show off the lighting
     let geometry = new THREE.PlaneGeometry(200, 200, 50, 50);
     let mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({color:color, map:map, side:THREE.DoubleSide}));
@@ -189,7 +195,13 @@ function createScene(canvas)
     mesh.castShadow = false;
     mesh.receiveShadow = true;
     group.add( mesh );
-    
-    
+
+    transFormControls = new THREE.TransformControls( camera, renderer.domElement );
+    transFormControls.addEventListener('change', renderer);
+    transFormControls.attach(mesh[0]);
+
+   
+    scene.add(transFormControls);
+    // add event listener to highlight dragged objects
     scene.add( root );
 }
