@@ -196,10 +196,26 @@ function createScene(canvas)
     mesh.receiveShadow = true;
     group.add( mesh );
 
-    transFormControls = new THREE.TransformControls( camera, renderer.domElement );
-    transFormControls.addEventListener('change', renderer);
-    transFormControls.attach(objectList[0]);
+    transformControls = new THREE.TransformControls(camera, renderer.domElement);
+    transformControls.setMode('rotate');
+    window.addEventListener( 'keyup', function ( event ) {
 
+					switch ( event.keyCode ) {
+
+						case 69: // E
+							control.setTranslationSnap( null );
+							control.setRotationSnap( null );
+							control.setScaleSnap( null );
+							break;
+                        case 82: // R
+							control.setTranslationSnap( null );
+							control.setRotationSnap( null );
+							control.setScaleSnap( null );
+							break;
+
+					}
+
+				} );
    
     scene.add(transFormControls);
     // add event listener to highlight dragged objects
