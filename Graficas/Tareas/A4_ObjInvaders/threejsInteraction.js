@@ -9,8 +9,8 @@ let floorUrl = "../images/checker_large.gif";
 let initAnim = true;
 let runAnim = false;
 let isPlay = false;
-
-
+let timeleft = 9;
+let downloadTimer;
 
 let startButton;
 let resetButton;
@@ -25,6 +25,17 @@ function StartAnimation() {
         initAnim = false;
         runAnim = true;
         theta = 0;
+        document.addEventListener('mousedown', onDocumentMouseDown);
+        downloadTimer = setInterval(function(){
+        
+        if(timeleft <= 0){
+            clearInterval(downloadTimer);
+            document.getElementById("tiempo").innerHTML = "Finished";
+        } else {
+            document.getElementById("tiempo").innerHTML = timeleft + " segundos";
+        }
+        timeleft -= 1;
+        }, 1000);
     }
     // Start and Pause 
     if (runAnim) {
@@ -34,6 +45,7 @@ function StartAnimation() {
         render();
     } 
     else {
+        downloadTimer = 0;
         document.getElementById("startButtonId").innerHTML = 'Start';
         isPlay= false;
         runAnim = true;
@@ -42,7 +54,13 @@ function StartAnimation() {
 
 // Reset Button
  function ResetParameters() {
-    isPlay = false;
+     
+    timeleft = 9;
+    initAnim = true;
+    document.getElementById("startButtonId").innerHTML = 'Start';
+    document.getElementById("tiempo").innerHTML = "10 segundos";
+    isPlay= false;
+    runAnim = false;
     scene.children.forEach(obj =>{   
         let name = obj.name;
         if(name.charAt(0) == "C"){
@@ -52,7 +70,8 @@ function StartAnimation() {
     for ( i = 0 ; i<10 ; i++){
         createObject();
     }    
-    objectDestroy=0;
+    objectDestroy = 0;
+    downloadTimer = 0;
     document.getElementById ("contador").innerHTML = objectDestroy;
 
 }
@@ -101,8 +120,7 @@ function createScene(canvas)
     
     raycaster = new THREE.Raycaster();
         
-    console.log(scene.children)
-    document.addEventListener('mousedown', onDocumentMouseDown);
+    
     document.getElementById("startButtonId").addEventListener("click", StartAnimation);
     document.getElementById("resetButtonId").addEventListener("click", ResetParameters);
     window.addEventListener( 'resize', onWindowResize);
@@ -195,9 +213,15 @@ function run()
 {
     render();
     requestAnimationFrame(run);
-    if(isPlay){
+    if(isPlay && timeleft >= 0){
         moveObjects();
     } 
+    else{
+        document.removeEventListener('mousedown', onDocumentMouseDown);
+        document.getElementById("startButtonId").innerHTML = 'Start';
+        isPlay= false;
+        runAnim = true;
+    }
 }
 
 function render() 
