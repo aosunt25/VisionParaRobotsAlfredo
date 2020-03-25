@@ -9,16 +9,14 @@ let floorUrl = "../images/checker_large.gif";
 let initAnim = true;
 let runAnim = false;
 let isPlay = false;
-let timeleft = 9;
+let timeleft = 29;
 let downloadTimer;
 
 let startButton;
 let resetButton;
 
 
-//let resetButton = document.getElementByName( 'resetButtonId' );
 
-// Start Button
 function StartAnimation() {
     if (initAnim) {
      
@@ -39,7 +37,6 @@ function StartAnimation() {
     }
     // Start and Pause 
     if (runAnim) {
-        document.getElementById("startButtonId").innerHTML = 'Pause';
         isPlay= true;
         runAnim = false;
         render();
@@ -52,13 +49,13 @@ function StartAnimation() {
     }
 }
 
-// Reset Button
+
  function ResetParameters() {
-     
-    timeleft = 9;
+
+    timeleft = 29;
     initAnim = true;
     document.getElementById("startButtonId").innerHTML = 'Start';
-    document.getElementById("tiempo").innerHTML = "10 segundos";
+    document.getElementById("tiempo").innerHTML = "30 segundos";
     isPlay= false;
     runAnim = false;
     scene.children.forEach(obj =>{   
@@ -134,7 +131,6 @@ function onWindowResize()
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
-
 
 function createObject(){
     
