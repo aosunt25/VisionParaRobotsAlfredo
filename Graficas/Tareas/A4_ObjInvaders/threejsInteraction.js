@@ -5,17 +5,18 @@ let mouse = new THREE.Vector2(), INTERSECTED, CLICKED;
 let radius = 100, theta = 0;
 let objectDestroy = 0;
 let floorUrl = "../images/checker_large.gif";
+let objModelUrl = {obj:'/box-by-Algorythm/box.obj', map:'/box-by-Algorythm/Metal_Plate_011_basecolor.jpg'};
 
 let initAnim = true;
 let runAnim = false;
 let isPlay = false;
-let timeleft = 29;
+let timeleft = 59;
 let downloadTimer;
 
 let startButton;
 let resetButton;
 
-
+console.log(timeleft)
 
 function StartAnimation() {
     if (initAnim) {
@@ -52,7 +53,7 @@ function StartAnimation() {
 
  function ResetParameters() {
 
-    timeleft = 29;
+    timeleft = 59;
     initAnim = true;
     document.getElementById("startButtonId").innerHTML = 'Start';
     document.getElementById("tiempo").innerHTML = "30 segundos";
@@ -83,7 +84,6 @@ function createScene(canvas)
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
-    console.log(camera.position);
     scene = new THREE.Scene();
     scene.background = new THREE.Color( 0xf0f0f0 );
     
@@ -107,11 +107,13 @@ function createScene(canvas)
     
     for (  counter = 0; counter < 10; counter ++ ) 
     {
+    
+
         let object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
         
         object.name = 'Cube' + counter;
         object.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -200);
-        
+        console.log(object.position.z);
         scene.add( object );
     }
     
@@ -196,8 +198,8 @@ function moveObjects(){
         if(obj.position.z < camera.position.z){
             obj.position.z += Math.max( 0.1, dz );
         }
-        if(obj.positionz == 0 && obj.position.y == 0 && obj.position.x == 0){
-           
+        if(obj.position.z == -100 ){
+            console.log("holas")
             scene.remove(scene.getObjectByName(obj.name));
             objectDestroy-=1;
             createObject();
