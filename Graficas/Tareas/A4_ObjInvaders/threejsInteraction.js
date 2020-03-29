@@ -1,3 +1,5 @@
+// Alfredo Osuna Torres A01339250
+
 let container;
 let camera, scene, raycaster, renderer;
 let counter;
