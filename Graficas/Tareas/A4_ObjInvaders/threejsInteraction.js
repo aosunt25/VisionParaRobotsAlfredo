@@ -140,7 +140,18 @@ function createObject(){
         objectDestroy+=1;
         document.getElementById ("contador").innerHTML = objectDestroy;
         let geometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
-        let object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+        var loader = new THREE.CubeTextureLoader();
+        
+        loader.setPath( 'textures/' );
+
+        let textureCube = loader.load( [
+            'water_texture_2.jpg', 'water_texture_2.jpg',
+            'water_texture_2.jpg', 'water_texture_2.jpg',
+            'water_texture_2.jpg', 'water_texture_2.jpg'
+        ] );
+
+        let material = new THREE.MeshBasicMaterial( { color: 0xffffff, envMap: textureCube } );
+        let object = new THREE.Mesh( geometry, material ) );
         
         counter+=1;    
         object.name = 'Cube' + counter;
