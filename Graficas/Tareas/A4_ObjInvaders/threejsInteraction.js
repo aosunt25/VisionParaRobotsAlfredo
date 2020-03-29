@@ -16,7 +16,7 @@ let downloadTimer;
 let startButton;
 let resetButton;
 
-console.log(timeleft)
+
 
 function StartAnimation() {
     if (initAnim) {
@@ -107,13 +107,10 @@ function createScene(canvas)
     
     for (  counter = 0; counter < 10; counter ++ ) 
     {
-    
-
         let object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
         
         object.name = 'Cube' + counter;
         object.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -200);
-        console.log(object.position.z);
         scene.add( object );
     }
     
@@ -137,21 +134,22 @@ function onWindowResize()
 function createObject(){
     
     if(scene.children.length<=11){
-        objectDestroy+=1;
+        
         document.getElementById ("contador").innerHTML = objectDestroy;
         let geometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
-        var loader = new THREE.CubeTextureLoader();
+
+        // var loader = new THREE.CubeTextureLoader();
         
-        loader.setPath( 'textures/' );
+        // loader.setPath( 'textures/' );
 
-        let textureCube = loader.load( [
-            'water_texture_2.jpg', 'water_texture_2.jpg',
-            'water_texture_2.jpg', 'water_texture_2.jpg',
-            'water_texture_2.jpg', 'water_texture_2.jpg'
-        ] );
-
-        let material = new THREE.MeshBasicMaterial( { color: 0xffffff, envMap: textureCube } );
-        let object = new THREE.Mesh( geometry, material ) );
+        // let textureCube = loader.load( [
+        //     'water_texture_2.jpg', 'water_texture_2.jpg',
+        //     'water_texture_2.jpg', 'water_texture_2.jpg',
+        //     'water_texture_2.jpg', 'water_texture_2.jpg'
+        // ] );
+        // textureCube.minFilter =  THREE.LinearFilter;
+        // let material = new THREE.MeshBasicMaterial( { color: 0xffffff, envMap: textureCube } );
+        let object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
         
         counter+=1;    
         object.name = 'Cube' + counter;
@@ -173,12 +171,11 @@ function onDocumentMouseDown(event)
     raycaster.setFromCamera( mouse, camera );
 
     let intersects = raycaster.intersectObjects( scene.children );
-    console.log(intersects);
-    console.log("intersects", intersects);
     if ( intersects.length > 0 ) 
     {
         CLICKED = intersects[ intersects.length - 1 ].object;
         scene.remove(scene.getObjectByName(CLICKED.name));
+        objectDestroy+=1;
         createObject();
     } 
     
@@ -187,33 +184,35 @@ function onDocumentMouseDown(event)
 function moveObjects(){
     
     scene.children.forEach(obj => {
-        
-        let dx = obj.position.x - camera.position.x;
-        let dy = obj.position.y - camera.position.y;
-        let dz = obj.position.z - camera.position.z;
-        //Object moves X axes 
-        if (obj.position.x > camera.position.x) {
-            obj.position.x -= Math.min( 0.05, dx );    
-        }
-        else if(obj.position.x < camera.position.x){
-            obj.position.x += Math.max( 0.05, dx );
-        }
-        //Object moves Y axes 
-        if (obj.position.y > camera.position.y) {
-            obj.position.y -= Math.min( 0.05, dy );
-        }
-        else if(obj.position.y < camera.position.y){
-            obj.position.y += Math.max( 0.05, dy );
-        }
-        //Object moves Z axes  
-        if(obj.position.z < camera.position.z){
-            obj.position.z += Math.max( 0.1, dz );
-        }
-        if(obj.position.z == -100 ){
-            console.log("holas")
-            scene.remove(scene.getObjectByName(obj.name));
-            objectDestroy-=1;
-            createObject();
+        let name = obj.name;
+        if(name.charAt(0) == "C"){
+
+            let dx = obj.position.x - camera.position.x;
+            let dy = obj.position.y - camera.position.y;
+            let dz = obj.position.z - camera.position.z;
+            //Object moves X axes 
+            if (obj.position.x > camera.position.x) {
+                obj.position.x -= Math.min( 0.05, dx );    
+            }
+            else if(obj.position.x < camera.position.x){
+                obj.position.x += Math.max( 0.05, dx );
+            }
+            //Object moves Y axes 
+            if (obj.position.y > camera.position.y) {
+                obj.position.y -= Math.min( 0.05, dy );
+            }
+            else if(obj.position.y < camera.position.y){
+                obj.position.y += Math.max( 0.05, dy );
+            }
+            //Object moves Z axes  
+            if(obj.position.z < camera.position.z){
+                obj.position.z += Math.max( 0.1, dz );
+            }
+            if(obj.position.z > -100 ){
+                scene.remove(scene.getObjectByName(obj.name));
+                objectDestroy-=1;
+                createObject();
+            }
         }
 });
 }
