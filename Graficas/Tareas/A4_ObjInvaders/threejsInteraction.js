@@ -27,22 +27,25 @@ function StartAnimation() {
         runAnim = true;
         theta = 0;
         document.addEventListener('mousedown', onDocumentMouseDown);
-        downloadTimer = setInterval(function(){
         
-        if(timeleft <= 0){
-            clearInterval(downloadTimer);
-            document.getElementById("tiempo").innerHTML = "Finished";
-        } else {
-            document.getElementById("tiempo").innerHTML = timeleft + " segundos";
-        }
-        timeleft -= 1;
-        }, 1000);
+        
     }
     // Start and Pause 
     if (runAnim) {
         isPlay= true;
         runAnim = false;
         render();
+        downloadTimer = setInterval(function(){
+            if(timeleft <= 0){
+                clearInterval(downloadTimer);
+                document.getElementById("tiempo").innerHTML = "Finished";
+                isPlay= false;
+
+            } else {
+                document.getElementById("tiempo").innerHTML = timeleft + " segundos";
+            }
+            timeleft -= 1;
+            }, 1000);
     } 
     else {
         downloadTimer = 0;
@@ -58,7 +61,7 @@ function StartAnimation() {
     timeleft = 59;
     initAnim = true;
     document.getElementById("startButtonId").innerHTML = 'Start';
-    document.getElementById("tiempo").innerHTML = "30 segundos";
+    document.getElementById("tiempo").innerHTML = "60 segundos";
     isPlay= false;
     runAnim = false;
     scene.children.forEach(obj =>{   
@@ -105,11 +108,14 @@ function createScene(canvas)
     floor.rotation.x = -Math.PI / 2;
     scene.add( floor );
 
+    let material = new THREE.MeshBasicMaterial({
+        map: THREE.ImageUtils.loadTexture('../textures/side.png')
+     });
     let geometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
     
     for (  counter = 0; counter < 10; counter ++ ) 
     {
-        let object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+        let object = new THREE.Mesh( geometry, material );
         
         object.name = 'Cube' + counter;
         object.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -200);
@@ -137,21 +143,17 @@ function createObject(){
     
     if(scene.children.length<=11){
         
+
+        let material = new THREE.MeshBasicMaterial({
+            map: THREE.ImageUtils.loadTexture('../textures/side.png')
+         });
+        
         document.getElementById ("contador").innerHTML = objectDestroy;
         let geometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
 
-        // var loader = new THREE.CubeTextureLoader();
         
-        // loader.setPath( 'textures/' );
-
-        // let textureCube = loader.load( [
-        //     'water_texture_2.jpg', 'water_texture_2.jpg',
-        //     'water_texture_2.jpg', 'water_texture_2.jpg',
-        //     'water_texture_2.jpg', 'water_texture_2.jpg'
-        // ] );
-        // textureCube.minFilter =  THREE.LinearFilter;
-        // let material = new THREE.MeshBasicMaterial( { color: 0xffffff, envMap: textureCube } );
-        let object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+        
+        let object = new THREE.Mesh( geometry, material );
         
         counter+=1;    
         object.name = 'Cube' + counter;
@@ -223,8 +225,9 @@ function run()
 {
     render();
     requestAnimationFrame(run);
-    if(isPlay && timeleft >= 0){
+    if(isPlay){
         moveObjects();
+       
     } 
     else{
         document.removeEventListener('mousedown', onDocumentMouseDown);

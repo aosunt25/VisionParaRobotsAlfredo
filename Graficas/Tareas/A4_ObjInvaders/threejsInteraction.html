@@ -6,7 +6,7 @@
 
 <script src="../libs/jquery-3.4.1/jquery-3.4.1.min.js"></script>
 <script src="../libs/jquery-ui/jquery-ui.js"></script>
-
+<link rel="stylesheet" href="../css/threejsshaders.css" />
 <script src="../libs/three.js/three.js"></script>
 
 <script src="../libs/tween.js/tween.js"></script>
@@ -18,6 +18,56 @@
 <script src="../libs/three.js/utils/cloneFBX.js"></script>
 
 <script src="threejsInteraction.js"></script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+
+	uniform float time;
+
+	//A sampler is a set of GLSL variable types. Variables of one of the sampler types must be uniforms or as function parameters. Each sampler in a program represents a single texture of a particular texture type.
+	uniform sampler2D noiseTexture;
+	uniform sampler2D glowTexture;
+
+	varying vec2 texCoord;
+
+	void main( void ) {
+
+		/*Texture2D - Retrieves texels (i.e. the color) of a texture for the given coordinates.
+		vec4 texture2D(sampler2D sampler, vec2 coord)
+		sampler - specifies the sampler to which the texture from which texels will be retrieved is bound.
+		coord - specifies the texture coordinates at which texture will be sampled.
+		*/
+		vec4 noise = texture2D( noiseTexture, texCoord );
+		
+		vec2 T1 = texCoord + vec2( 1.5, -1.5 ) * time;
+		vec2 T2 = texCoord + vec2( -0.5, 1.5 ) * time; 
+
+		T1.x += noise.r * 4.0;
+		T1.y += noise.g * 4.0;
+
+		T2.x += noise.g * 0.2;
+		T2.y += noise.b * 0.2;
+
+		float alpha = texture2D( noiseTexture, T1 * 2.0 ).a ;//- 0.25;
+
+		vec4 color = texture2D( glowTexture, T2 );
+		vec4 newColor = vec4( alpha, alpha, alpha, alpha ) + ( color * color );
+		gl_FragColor = newColor;
+	}
+
+</script>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+
+	varying vec2 texCoord;
+
+	void main()
+	{
+		texCoord = uv;
+		vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+		gl_Position = projectionMatrix * mvPosition;
+	}
+
+</script>
 
 <style>
     html, body {
@@ -52,7 +102,7 @@
             
     <canvas id="webglcanvas"></canvas>
 
-    <div id="title" style="position: absolute; left: 10px; top: 10px; width:200px; height:100px;">
+    <div id="title" style="position: absolute; right: 10px; top: 10px; width:200px; height:100px;">
         <h2> Contador</h2>
         <h3 id = "contador">0</h3>
         <h2> Tiempo</h2>
