@@ -2,12 +2,12 @@
 
 let container;
 let camera, scene, raycaster, renderer;
-let counter;
+let counter = 0;
 let mouse = new THREE.Vector2(), INTERSECTED, CLICKED;
 let radius = 100, theta = 0;
 let objectDestroy = 0;
 let floorUrl = "../images/checker_large.gif";
-let objModelUrl = {obj:'/box-by-Algorythm/box.obj', map:'/box-by-Algorythm/Metal_Plate_011_basecolor.jpg'};
+let objModelUrl = {obj:'../wooden _crate/wooden _crate.obj', map:'../wooden _crate/Textures/1024/Wooden Crate_Crate_BaseColor.png'};
 
 let initAnim = true;
 let runAnim = false;
@@ -18,12 +18,26 @@ let downloadTimer;
 let startButton;
 let resetButton;
 
-
+function promisifyLoader ( loader, onProgress ) 
+{
+    function promiseLoader ( url ) {
+  
+      return new Promise( ( resolve, reject ) => {
+  
+        loader.load( url, resolve, onProgress, reject );
+  
+      } );
+    }
+  
+    return {
+      originalLoader: loader,
+      load: promiseLoader,
+    };
+}
 
 function StartAnimation() {
     if (initAnim) {
      
-        initAnim = false;
         runAnim = true;
         theta = 0;
         document.addEventListener('mousedown', onDocumentMouseDown);
@@ -57,7 +71,7 @@ function StartAnimation() {
 
 
  function ResetParameters() {
-
+    counter = 0;
     timeleft = 59;
     initAnim = true;
     document.getElementById("startButtonId").innerHTML = 'Start';
@@ -70,7 +84,7 @@ function StartAnimation() {
             obj.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -200, -200);
         }
     });
-    for ( i = 0 ; i<10 ; i++){
+    for ( counter = 0 ; counter<10 ; counter++){
         createObject();
     }    
     objectDestroy = 0;
@@ -108,20 +122,15 @@ function createScene(canvas)
     floor.rotation.x = -Math.PI / 2;
     scene.add( floor );
 
-    let material = new THREE.MeshBasicMaterial({
-        map: THREE.ImageUtils.loadTexture('../textures/side.png')
-     });
-    let geometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
+
     
     for (  counter = 0; counter < 10; counter ++ ) 
     {
-        let object = new THREE.Mesh( geometry, material );
-        
-        object.name = 'Cube' + counter;
-        object.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -200);
-        scene.add( object );
+        createObject()
     }
-    
+    objectDestroy=0;
+    document.getElementById ("contador").innerHTML = objectDestroy;
+
     raycaster = new THREE.Raycaster();
         
     
@@ -139,27 +148,38 @@ function onWindowResize()
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
-function createObject(){
-    
+async function createObject(){
     if(scene.children.length<=11){
-        
-
-        let material = new THREE.MeshBasicMaterial({
-            map: THREE.ImageUtils.loadTexture('../textures/side.png')
-         });
-        
+        objectDestroy+=1;
         document.getElementById ("contador").innerHTML = objectDestroy;
-        let geometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
+        const objPromiseLoader = promisifyLoader(new THREE.OBJLoader());
 
-        
-        
-        let object = new THREE.Mesh( geometry, material );
-        
-        counter+=1;    
-        object.name = 'Cube' + counter;
-        object.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -200);
-        
-        scene.add( object );
+        try {
+            const object = await objPromiseLoader.load(objModelUrl.obj);
+            
+            let texture = objModelUrl.hasOwnProperty('map') ? new THREE.TextureLoader().load(objModelUrl.map) : null;
+            
+
+            object.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                    child.userData.parent = object
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                    child.material.map = texture;
+                    
+                }
+            });
+
+            object.scale.set(4, 4, 4);
+            object.name = 'Cube' + counter;
+            object.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -200);
+            scene.add(object);
+
+        }
+        catch (err) {
+            return onError(err);
+        }
+
     }
 
     
@@ -174,13 +194,20 @@ function onDocumentMouseDown(event)
     // find intersections
     raycaster.setFromCamera( mouse, camera );
 
-    let intersects = raycaster.intersectObjects( scene.children );
+    let intersects = raycaster.intersectObjects( scene.children, true );
     if ( intersects.length > 0 ) 
     {
+        
         CLICKED = intersects[ intersects.length - 1 ].object;
-        scene.remove(scene.getObjectByName(CLICKED.name));
-        objectDestroy+=1;
+        console.log(CLICKED.userData.parent.name)
+        if(CLICKED.name.charAt(0)=="C"){
+            objectDestroy+=1;
+            document.getElementById ("contador").innerHTML = objectDestroy;
+            CLICKED.userData.parent.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -200);
+
+        }
         createObject();
+        
     } 
     
 }
@@ -190,7 +217,6 @@ function moveObjects(){
     scene.children.forEach(obj => {
         let name = obj.name;
         if(name.charAt(0) == "C"){
-
             let dx = obj.position.x - camera.position.x;
             let dy = obj.position.y - camera.position.y;
             let dz = obj.position.z - camera.position.z;
@@ -213,9 +239,10 @@ function moveObjects(){
                 obj.position.z += Math.max( 0.1, dz );
             }
             if(obj.position.z > -100 ){
-                scene.remove(scene.getObjectByName(obj.name));
+                console.log(obj.name);
+                obj.position.set(Math.random() * 200 - 100, Math.random() * 200 - 100, -200);
                 objectDestroy-=1;
-                createObject();
+                document.getElementById ("contador").innerHTML = objectDestroy;
             }
         }
 });
