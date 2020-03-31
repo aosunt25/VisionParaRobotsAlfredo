@@ -12,9 +12,9 @@ objectList = [],
 orbitControls = null;
 transFormControls = null;
 mesh = null;
-
+let objectMove;
 let objLoader = null;
-
+let controls;
 let duration = 20000; // ms
 let currentTime = Date.now();
 
@@ -30,6 +30,8 @@ let SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 2048;
 
 //Scene Objects
 let objModelUrl = {obj:'../models/obj/human/FinalBaseMesh.obj', map:'../models/obj/human/gray.png'};
+
+render();
 
 function promisifyLoader ( loader, onProgress )
 {
@@ -60,6 +62,7 @@ async function loadObj(objModelUrl, objectList)
                 child.castShadow = true;
                 child.receiveShadow = true;
                 child.material.map = texture
+                objectMove = child;
             }
         });
 
@@ -137,8 +140,8 @@ function createScene(canvas)
 
     // Add  a camera so we can view the scene
     camera = new THREE.PerspectiveCamera( 60, canvas.width / canvas.height, 1, 4000 );
-    camera.position.set(0, 15, 25);
-    camera.lookAt(0,10,0);
+    camera.position.set(0, 15, 40);
+    camera.lookAt(0,200,10);
     scene.add(camera);
 
     // orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -172,36 +175,35 @@ function createScene(canvas)
     ambientLight = new THREE.AmbientLight ( 0xffffff, 0.8);
     root.add(ambientLight);
 
-    transformControls = new THREE.TransformControls(camera, renderer.domElement);
-    transformControls.setMode('rotate');
-    window.addEventListener( 'keyup', function ( event ) {
-
-					switch ( event.keyCode ) {
-
-						case 69: // E
-							control.setTranslationSnap( null );
-							control.setRotationSnap( null );
-							control.setScaleSnap( null );
-							break;
-                        case 82: // R
-							control.setTranslationSnap( null );
-							control.setRotationSnap( null );
-							control.setScaleSnap( null );
-							break;
-
-					}
-
-                } );
+    orbit = new THREE.OrbitControls( camera, renderer.domElement );
+    orbit.update();
+    orbit.addEventListener( 'change', render );
                 
+    transformControls = new THREE.TransformControls(camera, renderer.domElement);
+    transformControls.addEventListener('change', render);
+    
+    
+                
+    transformControls.addEventListener( 'dragging-changed', function ( event ) {
 
-    transformControls.addEventListener( 'mousedown', function(){
+        orbit.enabled = ! event.value;
+    
+    } );
+    
+    loadObj(objModelUrl, objectList);
+    
+    transformControls.attach(objectMove);    
+    
+    document.addEventListener( 'mousedown', function(){
+        console.log("hola");
+        console.log(objectMove);
         transformControls.setMode( "rotate" );
     });
 
-    transformControls.attach(scene.getObjectByName("objObject"));
+    
     scene.add(transformControls);
     // Create the objects
-    loadObj(objModelUrl, objectList);
+    
 
 
     // Create a group to hold the objects
@@ -228,4 +230,10 @@ function createScene(canvas)
     
     // add event listener to highlight dragged objects
     scene.add( root );
+}
+
+function render() {
+
+    renderer.render( scene, camera );
+
 }

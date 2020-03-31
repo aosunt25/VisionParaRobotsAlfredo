@@ -52,7 +52,7 @@ function StartAnimation() {
         downloadTimer = setInterval(function(){
             if(timeleft <= 0){
                 clearInterval(downloadTimer);
-                document.getElementById("tiempo").innerHTML = "Finished";
+                document.getElementById("tiempo").innerHTML = "FIN";
                 isPlay= false;
 
             } else {
