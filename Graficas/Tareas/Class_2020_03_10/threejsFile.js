@@ -69,8 +69,9 @@ async function loadObj(objModelUrl, objectList)
         object.rotation.y = 0;
         object.name = "objObject";
         objectList.push(object);
-        scene.add(object);
-
+        scene.add(object); 
+       
+        
     }
     catch (err) {
         return onError(err);
@@ -116,6 +117,7 @@ function setLightColor(light, r, g, b)
 
     light.color.setRGB(r, g, b);
 }
+
 
 function createScene(canvas)
 {
@@ -170,6 +172,34 @@ function createScene(canvas)
     ambientLight = new THREE.AmbientLight ( 0xffffff, 0.8);
     root.add(ambientLight);
 
+    transformControls = new THREE.TransformControls(camera, renderer.domElement);
+    transformControls.setMode('rotate');
+    window.addEventListener( 'keyup', function ( event ) {
+
+					switch ( event.keyCode ) {
+
+						case 69: // E
+							control.setTranslationSnap( null );
+							control.setRotationSnap( null );
+							control.setScaleSnap( null );
+							break;
+                        case 82: // R
+							control.setTranslationSnap( null );
+							control.setRotationSnap( null );
+							control.setScaleSnap( null );
+							break;
+
+					}
+
+                } );
+                
+
+    transformControls.addEventListener( 'mousedown', function(){
+        transformControls.setMode( "rotate" );
+    });
+
+    transformControls.attach(scene.getObjectByName("objObject"));
+    scene.add(transformControls);
     // Create the objects
     loadObj(objModelUrl, objectList);
 
@@ -195,29 +225,7 @@ function createScene(canvas)
     mesh.castShadow = false;
     mesh.receiveShadow = true;
     group.add( mesh );
-
-    transformControls = new THREE.TransformControls(camera, renderer.domElement);
-    transformControls.setMode('rotate');
-    window.addEventListener( 'keyup', function ( event ) {
-
-					switch ( event.keyCode ) {
-
-						case 69: // E
-							control.setTranslationSnap( null );
-							control.setRotationSnap( null );
-							control.setScaleSnap( null );
-							break;
-                        case 82: // R
-							control.setTranslationSnap( null );
-							control.setRotationSnap( null );
-							control.setScaleSnap( null );
-							break;
-
-					}
-
-				} );
-   
-    scene.add(transFormControls);
+    
     // add event listener to highlight dragged objects
     scene.add( root );
 }
