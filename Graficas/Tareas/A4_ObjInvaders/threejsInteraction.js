@@ -69,7 +69,6 @@ function StartAnimation() {
     }
 }
 
-
  function ResetParameters() {
     counter = 0;
     timeleft = 59;
